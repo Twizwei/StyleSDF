@@ -19,7 +19,7 @@ from utils import (
     extract_mesh_with_marching_cubes,
     xyz2mesh,
 )
-
+import pdb
 
 torch.random.manual_seed(1234)
 

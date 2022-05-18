@@ -19,7 +19,7 @@ from pytorch3d.renderer import TexturesUV
 from pytorch3d.structures import Meshes
 from pytorch3d.renderer import look_at_view_transform, FoVPerspectiveCameras
 from pytorch3d.transforms import matrix_to_euler_angles
-
+import pdb
 
 class PixelNorm(nn.Module):
     def __init__(self):
@@ -609,11 +609,23 @@ class Decoder(nn.Module):
 
     def forward(self, features, styles, rgbd_in=None, transform=None,
                 return_latents=False, inject_index=None, truncation=1,
-                truncation_latent=None, input_is_latent=False, noise=None,
+                truncation_latent=None, input_is_latent=False, noise=None, input_is_w_plus=False,
                 randomize_noise=True, mesh_path=None):
-        latent, noise = self.styles_and_noise_forward(styles, noise, inject_index, truncation,
-                                                      truncation_latent, input_is_latent,
-                                                      randomize_noise)
+        # pdb.set_trace()
+        if not input_is_w_plus:
+            latent, noise = self.styles_and_noise_forward(styles, noise, inject_index, truncation,
+                                                        truncation_latent, input_is_latent,
+                                                        randomize_noise)
+        else:
+            latent = styles[0]
+            if noise is None:
+                noise = [
+                    getattr(self.noises, f"noise_{i}") for i in range(self.num_layers)
+                ]
+        
+        # latent, noise = self.styles_and_noise_forward(styles, noise, inject_index, truncation,
+        #                                                 truncation_latent, input_is_latent,
+        #                                                 randomize_noise)
 
         out = self.conv1(features, latent[:, 0], noise=noise[0],
                          transform=transform, mesh_path=mesh_path)
@@ -670,12 +682,14 @@ class Generator(nn.Module):
         if self.full_pipeline:
             self.decoder = Decoder(model_opt)
 
-    def make_noise(self):
-        device = self.input.input.device
+    def make_noise(self, device='cuda'):
+        # device = self.input.input.device  # PR TODO: AttributeError: 'Generator' object has no attribute 'input'
 
         noises = [torch.randn(1, 1, 2 ** 2, 2 ** 2, device=device)]
-
-        for i in range(3, self.log_size + 1):
+        log_size=int(math.log(self.size, 2))
+        
+        # for i in range(3, self.log_size + 1):
+        for i in range(3, log_size + 1):
             for _ in range(2):
                 noises.append(torch.randn(1, 1, 2 ** i, 2 ** i, device=device))
 

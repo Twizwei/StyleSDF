@@ -55,27 +55,27 @@ def download_pretrained_models():
 
     print('Done!')
 
-    print('Downloading AFHQ pretrained volume renderer')
-    with requests.Session() as session:
-        try:
-            download_file(session, afhq_volume_renderer_spec)
-        except:
-            print('Google Drive download failed.\n' \
-                  'Trying do download from alternate server')
-            download_file(session, afhq_volume_renderer_spec, use_alt_url=True)
+    # print('Downloading AFHQ pretrained volume renderer')
+    # with requests.Session() as session:
+    #     try:
+    #         download_file(session, afhq_volume_renderer_spec)
+    #     except:
+    #         print('Google Drive download failed.\n' \
+    #               'Trying do download from alternate server')
+    #         download_file(session, afhq_volume_renderer_spec, use_alt_url=True)
 
-    print('Done!')
+    # print('Done!')
 
-    print('Downloading Downloading AFHQ full model (512x512)')
-    with requests.Session() as session:
-        try:
-            download_file(session, afhq_full_model_spec)
-        except:
-            print('Google Drive download failed.\n' \
-                  'Trying do download from alternate server')
-            download_file(session, afhq_full_model_spec, use_alt_url=True)
+    # print('Downloading Downloading AFHQ full model (512x512)')
+    # with requests.Session() as session:
+    #     try:
+    #         download_file(session, afhq_full_model_spec)
+    #     except:
+    #         print('Google Drive download failed.\n' \
+    #               'Trying do download from alternate server')
+    #         download_file(session, afhq_full_model_spec, use_alt_url=True)
 
-    print('Done!')
+    # print('Done!')
 
 def download_file(session, file_spec, use_alt_url=False, chunk_size=128, num_attempts=10):
     file_path = file_spec['file_path']
